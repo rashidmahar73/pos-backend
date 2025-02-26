@@ -18,6 +18,9 @@ export class User {
   password: string;
 
   @Column()
+  phoneNumber: string;
+
+  @Column()
   roleId: number;
 
   @Column({ type: 'boolean' })
