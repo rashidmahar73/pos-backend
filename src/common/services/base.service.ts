@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { BaseNode } from 'src/db/entity/baseNode';
+// import { BaseNode } from 'src/db/entity/baseNode';
 import { DeepPartial, Repository } from 'typeorm';
 
 @Injectable()
-export class BaseService<T extends BaseNode> {
+export class BaseService<T extends any> {
   constructor(private readonly repository: Repository<T>) {}
 
   async findAll(): Promise<T[]> {
