@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "postgresql"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -19,7 +19,7 @@ model Profile {
   last_name    String
   phone_number String
   password     String
-  email        String @unique
+  email        String @unique 
   role_id      Int
 
   @@unique([role_id])
