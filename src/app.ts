@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import Cors from 'cors';
 import routes from './routes';
 
+// main file
 const app = Express();
 app.use(Cors());
 app.use(bodyParser.urlencoded({ extended: true }));
