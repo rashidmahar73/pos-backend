@@ -6,11 +6,11 @@
   "author": "Rashid <rashidmahar73@gmail.com>",
   "license": "ISC",
   "scripts": {
-    "start": "prisma generate && prisma migrate deploy && tsc && node dist/index",
     "dev": "node index.js",
+    "build": "echo 'No build step required'",
+    "start": "node index.js",
     "migrate": "prisma migrate deploy",
-    "migrate:dev": "prisma migrate dev",
-    "build": "next build"
+    "migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^5.3.1",
