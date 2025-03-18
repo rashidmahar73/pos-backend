@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import db from "../../@core/utils/db";
 import Profile from "../../@core/models/Profile";
 
-export const handleCreateProfile: RequestHandler = async (req, res, next) => {
+export const handleCreateProfile = async (req, res, next) => {
   try {
     const data = req.body;
     const newProfile = await createProfile(data);
@@ -17,11 +17,11 @@ export const handleCreateProfile: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const handleLoginProfile: RequestHandler = async (
+export const handleLoginProfile = async (
   req,
   res,
   next
-): Promise<any> => {
+) => {
   try {
     const { email, password } = req.body;
 

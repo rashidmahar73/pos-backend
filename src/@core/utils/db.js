@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = global as unknown as { prisma?: PrismaClient };
+const globalForPrisma = global;
 
 const dbClient =  globalForPrisma.prisma ?? new PrismaClient({ 
   log: ['query', 'info', 'warn', 'error'],

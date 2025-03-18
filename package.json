@@ -7,9 +7,10 @@
   "license": "ISC",
   "scripts": {
     "start": "prisma generate && prisma migrate deploy && tsc && node dist/index",
-    "dev": "tsx src/index",
+    "dev": "node index.js",
     "migrate": "prisma migrate deploy",
-    "migrate:dev": "prisma migrate dev"
+    "migrate:dev": "prisma migrate dev",
+    "build": "next build"
   },
   "dependencies": {
     "@prisma/client": "^5.3.1",
@@ -38,7 +39,6 @@
     "@types/node": "^22.10.7",
     "@types/validator": "^13.12.2",
     "prisma": "^5.3.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "tsx": "^4.19.2"
   }
 }

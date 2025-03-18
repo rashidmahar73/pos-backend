@@ -2,7 +2,7 @@
 import db from '../utils/db';
 
 class Profile {
-  static async create(data: any) {
+  static async create(data) {
     return await db.profile.create({
       data: {
         first_name: data.first_name,
@@ -15,7 +15,7 @@ class Profile {
     });
   }
 
-  static async getByEmail(email: string) {
+  static async getByEmail(email) {
     return await db.profile.findUnique({
       where: { email },
     });
