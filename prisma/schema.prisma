@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["debian-openssl-1.1.x"] // Change this based on your hosting OS
 }
 
 datasource db {
@@ -19,7 +20,7 @@ model Profile {
   last_name    String
   phone_number String
   password     String
-  email        String @unique 
+  email        String @unique
   role_id      Int
 
   @@unique([role_id])
