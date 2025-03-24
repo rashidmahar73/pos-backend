@@ -1,7 +1,5 @@
-import { RequestHandler } from "express";
 import { createProfile } from "../../@core/services/profile";
 import jwt from "jsonwebtoken";
-import db from "../../@core/utils/db";
 import Profile from "../../@core/models/Profile";
 
 export const handleCreateProfile = async (req, res, next) => {
