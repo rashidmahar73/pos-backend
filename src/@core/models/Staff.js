@@ -27,6 +27,27 @@ class Staff {
     });
   }
 
+  static getByVerification(email) {
+    if (email) {
+      return db.staff.findUnique({
+        where: {
+          email,
+        },
+        include: {
+          role: true,
+        },
+      });
+    }
+    return db.staff.findUnique({
+      where: {
+        user_name: email,
+      },
+      include: {
+        role: true,
+      },
+    });
+  }
+
   static getByToken(confirmation_access_token) {
     return db.staff.findUnique({
       where: {

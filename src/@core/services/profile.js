@@ -17,11 +17,15 @@ export const createProfile = async (data) => {
 
   const pwdHash = await hashPassword(parsedData.password);
 
+  const email = data?.email;
+  const emailPrefix = email?.split("@")?.[0];
+
   const profileData = {
     first_name: data.first_name,
     last_name: data.last_name,
     phone_number: data.phone_number,
     email: data.email,
+    user_name: emailPrefix,
     role_id: data.role_id,
     password: pwdHash,
     is_active: true,
@@ -44,13 +48,13 @@ export const createProfile = async (data) => {
 };
 
 export const loginUser = async (email, password) => {
-  const profile = await Profile.getByEmail(email);
-  const staff = await Staff.getByEmail(email);
+  const profile = await Profile.getByVerification(email);
+  const staff = await Staff.getByVerification(email);
 
   const user = profile || staff;
 
   if (!user)
-    throw new Error("Profile does not exist against this email address.");
+    throw new Error("Profile does not exist against this data.");
 
   // // Verify password.
   if (!(await verifyPassword(password, user.password)))
@@ -77,11 +81,15 @@ export const createStaffProfile = async (data) => {
 
   const pwdHash = await hashPassword(parsedData.password);
 
+  const email = data?.email;
+  const emailPrefix = email?.split("@")?.[0];
+
   const profileData = {
     first_name: data.first_name,
     last_name: data.last_name,
     phone_number: data.phone_number,
     email: data.email,
+    user_name: emailPrefix,
     profile_id: data.profile_id,
     role_id: data.role_id,
     password: pwdHash,

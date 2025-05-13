@@ -34,6 +34,27 @@ class Profile {
     });
   }
 
+  static getByVerification(email) {
+    if (email) {
+      return db.profile.findUnique({
+        where: {
+          email,
+        },
+        include: {
+          role: true,
+        },
+      });
+    }
+    return db.profile.findUnique({
+      where: {
+        user_name: email,
+      },
+      include: {
+        role: true,
+      },
+    });
+  }
+
   static getByToken(confirmation_access_token) {
     return db.profile.findUnique({
       where: {
