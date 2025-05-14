@@ -1,6 +1,6 @@
 import app from "./app.js";
 
-const PORT = 3000;
+const PORT = 5000;
 
 (async () => {
   app.listen(PORT, () => {
