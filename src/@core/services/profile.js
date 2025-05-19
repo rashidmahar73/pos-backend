@@ -1,3 +1,5 @@
+import Membership from "../models/Membership.js";
+import Plan from "../models/Plan.js";
 import Profile from "../models/Profile.js";
 import Staff from "../models/Staff.js";
 import {
@@ -8,6 +10,43 @@ import {
 import profileAccountSchema, {
   staffProfileAccountSchema,
 } from "../validators/profile-data-validator.js";
+
+import { add, format } from "date-fns";
+
+function getNewExpiryDate(durationString) {
+  const now = new Date();
+
+  const baseDate = now;
+
+  const parts = durationString.toLowerCase().split(" ");
+  const value = parseInt(parts[0]);
+  const unit = parts[1];
+
+  let newDate = baseDate;
+
+  switch (unit) {
+    case "day":
+    case "days":
+      newDate = add(baseDate, { days: value });
+      break;
+    case "week":
+    case "weeks":
+      newDate = add(baseDate, { weeks: value });
+      break;
+    case "month":
+    case "months":
+      newDate = add(baseDate, { months: value });
+      break;
+    case "year":
+    case "years":
+      newDate = add(baseDate, { years: value });
+      break;
+    default:
+      throw new Error("Unsupported duration unit");
+  }
+
+  return format(newDate, "yyyy-MM-dd HH:mm:ss.SSS");
+}
 
 export const createProfile = async (data) => {
   const parsedData = profileAccountSchema.parse(data);
@@ -37,10 +76,22 @@ export const createProfile = async (data) => {
 
   const confirmation_access_token = createAccessToken(tokenPayload);
 
-  await Profile.create({
+  const newProfile = await Profile.create({
     confirmation_access_token,
     ...profileData,
   });
+
+  const planExist = await Plan.existsId(1);
+
+  const payload = {
+    profile_id: newProfile?.id,
+    plan_id: planExist?.id,
+    prev_duration: "0 year 0 month 0 day 0 hour 0 minute 0 sec 0 milisecond",
+    current_duration: planExist?.duration,
+    expire_at: getNewExpiryDate(planExist?.duration),
+  };
+
+  await Membership.create(payload);
 
   return {
     message: "Registered Successfully",
@@ -53,8 +104,7 @@ export const loginUser = async (email, password) => {
 
   const user = profile || staff;
 
-  if (!user)
-    throw new Error("Profile does not exist against this data.");
+  if (!user) throw new Error("Profile does not exist against this data.");
 
   // // Verify password.
   if (!(await verifyPassword(password, user.password)))
@@ -65,9 +115,25 @@ export const loginUser = async (email, password) => {
 
   const { password: profile_password, ...rest } = user;
 
-  return {
-    data: rest,
-  };
+  const membershipDetails = await Membership?.latestExistMembership(rest?.id);
+
+  const planDetails = await Plan.existsId(membershipDetails?.plan_id);
+
+  if (staff) {
+    return {
+      data: {
+        ...rest,
+        access: ["Brands"],
+      },
+    };
+  } else {
+    return {
+      data: {
+        ...rest,
+        membership: { ...membershipDetails, plan: planDetails },
+      },
+    };
+  }
 };
 
 export const createStaffProfile = async (data) => {

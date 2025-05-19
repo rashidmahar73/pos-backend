@@ -26,7 +26,7 @@ model Profile {
   last_name                 String
   phone_number              String
   password                  String
-  user_name                 String @unique
+  user_name                 String   @unique
   email                     String   @unique
   role_id                   Int
   role                      Roles    @relation(fields: [role_id], references: [id])
@@ -42,7 +42,7 @@ model Staff {
   last_name                 String
   phone_number              String
   password                  String
-  user_name                 String @unique
+  user_name                 String  @unique
   email                     String  @unique
   role_id                   Int
   role                      Roles   @relation(fields: [role_id], references: [id])
@@ -88,9 +88,32 @@ model Warehouses {
   name         String
   address      String
   phone_number String
+  city_id      Int?
+  zip_code     String @default("")
   email        String  @unique
   profile_id   Int
   is_delete    Boolean @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Plan {
+  id       Int    @id @default(autoincrement())
+  name     String
+  duration String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Membership {
+  id               Int    @id @default(autoincrement())
+  plan_id          Int
+  profile_id       Int
+  prev_duration    String
+  current_duration String
+  expire_at        String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
