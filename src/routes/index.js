@@ -8,6 +8,7 @@ import categoriesRouter from "./categories/routes.js";
 import brandsRouter from "./brands/routes.js";
 import warehousesRouter from "./warehouses/routes.js";
 import membershipRouter from "./membership/routes.js";
+import staffRouter from "./staff/routes.js";
 
 const routes = Router();
 
@@ -15,6 +16,7 @@ routes.use("/auth", profileRouter);
 
 routes.use(authValidationHandler, authContextInitHandler);
 
+routes.use("/auth", staffRouter);
 routes.use("/membership", membershipRouter);
 routes.use("/categories", categoriesRouter);
 routes.use("/brands", brandsRouter);

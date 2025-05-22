@@ -7,9 +7,7 @@ import {
   hashPassword,
   verifyPassword,
 } from "../utils/auth.js";
-import profileAccountSchema, {
-  staffProfileAccountSchema,
-} from "../validators/profile-data-validator.js";
+import profileAccountSchema from "../validators/profile-data-validator.js";
 
 import { add, format } from "date-fns";
 
@@ -18,7 +16,7 @@ function getNewExpiryDate(durationString) {
 
   const baseDate = now;
 
-  const parts = durationString.toLowerCase().split(" ");
+  const parts = durationString?.toLowerCase()?.split(" ");
   const value = parseInt(parts[0]);
   const unit = parts[1];
 
@@ -65,7 +63,7 @@ export const createProfile = async (data) => {
     phone_number: data.phone_number,
     email: data.email,
     user_name: emailPrefix,
-    role_id: data.role_id,
+    role_id: 2,
     password: pwdHash,
     is_active: true,
   };
@@ -136,52 +134,6 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const createStaffProfile = async (data) => {
-  const parsedData = staffProfileAccountSchema.parse(data);
-
-  if (await Staff.exists(parsedData?.email))
-    throw new Error("Profile already exists against this email address.");
-
-  if (await Profile.exists(parsedData?.email))
-    throw new Error("Profile already exists against this email address.");
-
-  const pwdHash = await hashPassword(parsedData.password);
-
-  const email = data?.email;
-  const emailPrefix = email?.split("@")?.[0];
-
-  const profileData = {
-    first_name: data.first_name,
-    last_name: data.last_name,
-    phone_number: data.phone_number,
-    email: data.email,
-    user_name: emailPrefix,
-    profile_id: data.profile_id,
-    role_id: data.role_id,
-    password: pwdHash,
-    is_active: true,
-    is_create_action: false,
-    is_read_action: false,
-    is_update_action: false,
-    is_delete_action: false,
-  };
-
-  const tokenPayload = {
-    sub: data.email,
-  };
-
-  const confirmation_access_token = createAccessToken(tokenPayload);
-
-  await Staff.create({
-    confirmation_access_token,
-    ...profileData,
-  });
-
-  return {
-    message: "Registered Successfully",
-  };
-};
-
 export const updateProfile = async (data) => {
   const parsedDataProfile = profileAccountSchema.parse(data);
 
@@ -194,49 +146,12 @@ export const updateProfile = async (data) => {
   return Profile.update(data?.id, { ...rest, password: pwdHash });
 };
 
-export const updateStaffProfile = async (data) => {
-  const parsedData = staffProfileAccountSchema.parse(data);
-
-  if (!(await Staff.exists(parsedData?.email)))
-    throw new Error("Staff Profile not exists against this email address.");
-
-  if (!(await Profile.existsId(parsedData?.profile_id))) {
-    throw new Error("Profile not exists against this email address.");
-  }
-
-  const pwdHash = await hashPassword(parsedData.password);
-  const { password, ...rest } = data;
-
-  return Staff.update(data?.id, { ...rest, password: pwdHash });
-};
-
-export const listProfileLists = async (paging) => {
+export const listProfile = async (paging) => {
   let _page = Math.abs(paging.page);
   _page = !_page ? 0 : _page - 1;
   let _limit = Math.abs(paging.limit) || 20;
 
   const [records, count] = await Profile.listAll({
-    skip: _page * _limit,
-    take: _limit,
-  });
-
-  return [
-    records,
-    {
-      total_records: count,
-      current_page: _page + 1,
-      total_pages: Math.ceil(count / _limit),
-      limit: _limit,
-    },
-  ];
-};
-
-export const listStaffLists = async (profile_id, paging) => {
-  let _page = Math.abs(paging.page);
-  _page = !_page ? 0 : _page - 1;
-  let _limit = Math.abs(paging.limit) || 20;
-
-  const [records, count] = await Profile.listByProfileStaffList(profile_id, {
     skip: _page * _limit,
     take: _limit,
   });

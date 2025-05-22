@@ -67,6 +67,26 @@ class Staff {
       },
     });
   }
+
+  static lists(profile_id, paging) {
+    return db.$transaction([
+      db.staff.findMany({
+        where: {
+          profile_id: profile_id,
+        },
+        orderBy: {
+          created_at: "asc",
+        },
+        skip: paging?.skip ?? 0,
+        take: paging?.take ?? 10,
+      }),
+      db.staff.count({
+        where: {
+          profile_id: profile_id,
+        },
+      }),
+    ]);
+  }
 }
 
 export default Staff;
